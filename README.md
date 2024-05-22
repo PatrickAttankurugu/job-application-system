@@ -1,70 +1,254 @@
-# Getting Started with Create React App
+# Job Application System
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+## Overview
+This project is a job application management system that helps users search for jobs, apply for them, and track their application status. The system is built with a Flask backend and a React frontend.
 
-## Available Scripts
+## Features
+- Job search using the Serper API
+- Apply for jobs with uploaded resumes
+- Track job applications
+- Update application status
+- Delete job applications
 
-In the project directory, you can run:
+## Project Structure
+job-application-system/
+├── backend/
+│ ├── app.py
+│ ├── config.py
+│ ├── models.py
+│ ├── routes/
+│ │ ├── init.py
+│ │ ├── job_routes.py
+│ │ ├── user_routes.py
+│ ├── uploads/
+│ ├── .env
+│ ├── requirements.txt
+├── frontend/
+│ ├── public/
+│ ├── src/
+│ │ ├── components/
+│ │ │ ├── JobList.js
+│ │ │ ├── JobDetails.js
+│ │ │ ├── ApplicationForm.js
+│ │ ├── App.js
+│ │ ├── index.js
+│ ├── package.json
+├── .gitignore
+├── README.md
+└── LICENSE
 
-### `npm start`
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+## Installation
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+### Backend
+1. Navigate to the backend directory:
+    ```bash
+    cd backend
+    ```
 
-### `npm test`
+2. Create a virtual environment and activate it:
+    ```bash
+    python -m venv venv
+    source venv/bin/activate  # On Windows use `venv\Scripts\activate`
+    ```
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+3. Install the required packages:
+    ```bash
+    pip install -r requirements.txt
+    ```
 
-### `npm run build`
+4. Create a `.env` file in the backend directory and add your API keys:
+    ```env
+    OPENAI_API_KEY=your_openai_api_key
+    SERPER_API_KEY=your_serper_api_key
+    ```
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+5. Run the backend server:
+    ```bash
+    python app.py
+    ```
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+### Frontend
+1. Navigate to the frontend directory:
+    ```bash
+    cd frontend
+    ```
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+2. Install the required packages:
+    ```bash
+    npm install
+    ```
 
-### `npm run eject`
+3. Start the frontend development server:
+    ```bash
+    npm start
+    ```
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+## API Endpoints
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+### User Routes
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+#### Set Preferences
+- **URL:** `/api/preferences`
+- **Method:** `POST`
+- **Description:** Save user preferences.
+- **Request Body:**
+    ```json
+    {
+      "preference": "example"
+    }
+    ```
+- **Response:**
+    ```json
+    {
+      "message": "Preferences saved successfully"
+    }
+    ```
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+#### Upload Resume
+- **URL:** `/api/upload`
+- **Method:** `POST`
+- **Description:** Upload a user resume.
+- **Request Body:** Form data with the key `file` containing the file.
+- **Response:**
+    ```json
+    {
+      "message": "Resume uploaded successfully"
+    }
+    ```
 
-## Learn More
+#### Get Applications
+- **URL:** `/api/applications`
+- **Method:** `GET`
+- **Description:** Get all applications for a user.
+- **Query Parameters:**
+    - `user_id` (integer): The ID of the user.
+- **Response:**
+    ```json
+    [
+      {
+        "job_title": "AI Developer",
+        "company": "TechCorp",
+        "location": "Accra",
+        "status": "Applied"
+      }
+    ]
+    ```
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+### Job Routes
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+#### Search Jobs
+- **URL:** `/api/search_jobs`
+- **Method:** `POST`
+- **Description:** Search for jobs using the Serper API.
+- **Request Body:**
+    ```json
+    {
+      "query": "AI Developer",
+      "location": "Accra"
+    }
+    ```
+- **Response:**
+    ```json
+    [
+      {
+        "title": "AI Developer",
+        "company": "TechCorp",
+        "location": "Accra",
+        "description": "Job description here..."
+      }
+    ]
+    ```
 
-### Code Splitting
+#### Apply for Jobs
+- **URL:** `/api/apply_for_jobs`
+- **Method:** `POST`
+- **Description:** Apply for jobs.
+- **Request Body:**
+    ```json
+    {
+      "user_id": 1,
+      "jobs": [
+        {
+          "title": "AI Developer",
+          "company": "TechCorp",
+          "location": "Accra"
+        }
+      ]
+    }
+    ```
+- **Response:**
+    ```json
+    {
+      "message": "Job applications submitted successfully"
+    }
+    ```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+#### Update Application Status
+- **URL:** `/api/update_status`
+- **Method:** `POST`
+- **Description:** Update the status of a job application.
+- **Request Body:**
+    ```json
+    {
+      "application_id": 1,
+      "status": "Interview Scheduled",
+      "interview_date": "2023-05-25T10:00:00",
+      "offer_details": "N/A"
+    }
+    ```
+- **Response:**
+    ```json
+    {
+      "message": "Application status updated successfully"
+    }
+    ```
 
-### Analyzing the Bundle Size
+#### Delete Application
+- **URL:** `/api/delete_application`
+- **Method:** `DELETE`
+- **Description:** Delete a job application.
+- **Request Body:**
+    ```json
+    {
+      "application_id": 1
+    }
+    ```
+- **Response:**
+    ```json
+    {
+      "message": "Application deleted successfully"
+    }
+    ```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+#### Application Details
+- **URL:** `/api/application_details`
+- **Method:** `GET`
+- **Description:** Retrieves detailed information about a specific job application.
+- **Query Parameters:**
+  - `application_id`: The ID of the application.
+- **Response:**
+    ```json
+    {
+      "job_title": "AI Developer",
+      "company": "TechCorp",
+      "location": "Accra",
+      "status": "Interview Scheduled",
+      "interview_date": "2023-05-25T10:00:00",
+      "offer_details": "N/A"
+    }
+    ```
 
-### Making a Progressive Web App
+## Environment Variables
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+Ensure that the following environment variables are set in a `.env` file:
 
-### Advanced Configuration
+```plaintext
+OPENAI_API_KEY="your_openai_api_key"
+SERPER_API_KEY="your_serper_api_key"
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+## Contributing
+Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
 
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+## License
+[MIT](LICENSE)
